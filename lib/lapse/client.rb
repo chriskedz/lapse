@@ -6,7 +6,10 @@ module Lapse
   class Client
     Dir[File.expand_path('../client/*.rb', __FILE__)].each { |f| require f }
 
+    include Clips
     include Configuration
+    include Frames
+    include Users
 
     attr_reader :access_token
     attr_reader :api_scheme
