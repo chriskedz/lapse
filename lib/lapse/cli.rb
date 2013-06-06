@@ -1,19 +1,28 @@
 require 'thor'
 require 'faraday'
 require 'faraday_middleware'
+require 'addressable/uri'
+require 'yaml'
 
 module Lapse
   class Cli < Thor
     desc 'signin', 'Signs the user in by passing in a twitter token'
-    def signin(token)
-      result = unauthenticated_client.authenticate(token)
-      self.access_token = result['access_token']
-      puts "Signed in as #{result.user.username}"
+    def signin(host, token)
+      result = unauthenticated_client(host).authenticate(token)
+
+      self.auth_data = {
+        :access_token => result['access_token'],
+        :api_host => host
+      }
+
+      result = ["Signed in as #{result.user.username}"]
+      result << " on #{host}" if host
+      puts result.join('')
     end
 
     desc 'signout', 'Signs the user out'
     def signout
-      self.access_token = nil
+      File.delete config_file
       puts 'Signed out'
     end
 
@@ -46,31 +55,58 @@ module Lapse
       p authenticated_client.publish_clip(clip.id)
 
       puts clip.slug
-
     end
 
 
     protected
 
-    def unauthenticated_client
-      Lapse::Client.new(:api_scheme => 'http')
+    def unauthenticated_client(host = api_host)
+      options = {}.merge(server_options(host))
+      Lapse::Client.new(options)
     end
 
-    def authenticated_client
-      raise unless access_token
-      Lapse::Client.new(access_token)
+    def authenticated_client(host = api_host)
+      options = {:access_token => access_token}.merge(server_options(host))
+      Lapse::Client.new(options)
+    end
+
+    def server_options(host)
+      if host
+        uri = Addressable::URI.parse(host)
+        {:api_scheme => uri.scheme, :api_host => [uri.host, uri.port].compact.join(':')}
+      else
+        {}
+      end
     end
 
     def access_token
-      @app_token ||= File.open(File.expand_path('~/.lapse')).read
+      auth_data[:access_token]
     end
 
-    def access_token=(val)
+    def api_host
+      auth_data[:api_host]
+    end
+
+    def auth_data
+      @app_token ||= begin
+        if File.exist?(config_file)
+          YAML.load(File.open(config_file).read)
+        else
+          {}
+        end
+      end
+    end
+
+    def auth_data=(val)
       @app_token = val
-      File.open(File.expand_path('~/.lapse'), 'w+') do |f|
-        f.write(val)
+      File.open(config_file, 'w+') do |f|
+        f.write(YAML.dump(val))
       end
       @app_token
+    end
+
+    def config_file
+      File.expand_path('~/.lapse')
     end
   end
 end

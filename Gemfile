@@ -23,4 +23,5 @@ group :test do
   gem 'thor'
   gem 'faraday'
   gem 'faraday_middleware'
+  gem 'addressable'
 end
