@@ -14,15 +14,17 @@ module Lapse
     attr_reader :access_token
     attr_reader :api_scheme
     attr_reader :api_host
+    attr_reader :api_prefix
     attr_reader :api_version
     attr_reader :transport
     attr_reader :result_format
 
     # Default parameters for the client
     DEFAULTS = {
-      :api_scheme => 'https',
-      :api_host => 'everlapse.com',
+      :api_scheme => 'http',
+      :api_host => 'localhost:3000',
       :api_version => '1',
+      :api_prefix => 'api',
       :result_format => :mashie,
       :transport => :http
     }
@@ -60,6 +62,7 @@ module Lapse
       @api_scheme = options[:api_scheme]
       @api_host = options[:api_host]
       @api_version = options[:api_version]
+      @api_prefix = options[:api_prefix]
       @client_token = options[:client_token] if options[:client_token]
       @transport = options[:transport]
       @result_format = options[:result_format]
@@ -74,7 +77,7 @@ module Lapse
     #
     # @return [String] API base URL
     def base_url
-      "#{@api_scheme}://#{@api_host}/v#{@api_version}/"
+      "#{@api_scheme}://#{@api_host}/#{@api_prefix}/v#{@api_version}/"
     end
 
     # Is the client has an access token.

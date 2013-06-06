@@ -20,4 +20,7 @@ group :test do
   gem 'simplecov', :require => false
   gem 'hashie' #unknown why this is required for certain dev envs to work (ahem, adam)
   gem 'm'
+  gem 'thor'
+  gem 'faraday'
+  gem 'faraday_middleware'
 end
