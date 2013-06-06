@@ -68,12 +68,18 @@ module Lapse
     option :url
     def photobooth(title, frames = 10)
       clip = authenticated_client.create_clip(title)
+
+      unless options[:url]
+        puts "Install imagesnap via \`brew install imagesnap\` to use your local camera."
+        return
+      end
+
       frames.to_i.times do |i|
         if options[:url]
           file = download_image(options[:url])
         else
           file = Tempfile.new(['photobooth', '.jpg'], encoding: 'BINARY')
-          system "imagesnap #{file.path}"
+          system "imagesnap #{file.path} > /dev/null"
         end
 
         upload_frame clip.id, file.path
