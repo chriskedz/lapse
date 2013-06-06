@@ -28,12 +28,24 @@ module Lapse
         params = new_frame.upload_params.to_hash.merge({'file' => file_upload })
 
         conn = Faraday.new do |c|
-          c.use FaradayMiddleware::FollowRedirects, limit: 3
+          c.use Faraday::Request::Multipart
+          c.adapter :net_http
+        end
+        response = conn.post(new_frame.upload_url, params)
+
+        if response.status == 303
+          conn.head response.headers['location']
         end
 
-        resp = conn.post(new_frame.upload_url, params)
-        p resp.body
+        authenticated_client.accept_frame(clip.id, new_frame.id)
+        puts "Uploaded frame #{new_frame.id}"
       end
+
+      sleep 2
+
+      p authenticated_client.publish_clip(clip.id)
+
+      puts clip.slug
 
     end
 

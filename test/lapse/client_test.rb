@@ -15,16 +15,19 @@ class ClientTest < Lapse::TestCase
 
   def test_base_url
     client = Lapse::Client.new
-    assert_equal 'https://everlapse.com/v1/', client.base_url
+    assert_equal 'https://everlapse.com/api/v1/', client.base_url
 
     client = Lapse::Client.new(:api_scheme => 'http', :api_host => 'example.com', :api_version => 42)
-    assert_equal 'http://example.com/v42/', client.base_url
+    assert_equal 'http://example.com/api/v42/', client.base_url
 
     client = Lapse::Client.new(:api_url => 'http://example.com')
-    assert_equal 'http://example.com/v1/', client.base_url
+    assert_equal 'http://example.com/api/v1/', client.base_url
 
     client = Lapse::Client.new(:api_url => 'http://localhost:3000')
-    assert_equal 'http://localhost:3000/v1/', client.base_url
+    assert_equal 'http://localhost:3000/api/v1/', client.base_url
+
+    client = Lapse::Client.new(:api_prefix => 'asd')
+    assert_equal 'https://everlapse.com/asd/v1/', client.base_url
   end
 
   def test_ssl?

@@ -4,7 +4,7 @@ class UsersTest < Lapse::TestCase
   def test_authenticate
     key = 'test_key'
 
-    stub_request(:post, 'https://everlapse.com/v1/authenticate').with(:body => "{\"twitter_access_token\":\"#{key}\"}").
+    stub_request(:post, 'https://everlapse.com/api/v1/authenticate').with(:body => "{\"twitter_access_token\":\"#{key}\"}").
       to_return(:status => 200, :body => "{}", :headers => {"x-access-token" => 'fake_token'})
 
     result = unauthenticated_client.authenticate(key)
@@ -13,7 +13,7 @@ class UsersTest < Lapse::TestCase
   end
 
   def test_me
-    stub_request(:get, 'https://everlapse.com/v1/me').to_return(:status => 200, :body => "{}")
+    stub_request(:get, 'https://everlapse.com/api/v1/me').to_return(:status => 200, :body => "{}")
     assert_equal Hash.new, authenticated_client.me
   end
 end

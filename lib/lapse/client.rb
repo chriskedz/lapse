@@ -21,8 +21,8 @@ module Lapse
 
     # Default parameters for the client
     DEFAULTS = {
-      :api_scheme => 'http',
-      :api_host => 'localhost:3000',
+      :api_scheme => 'https',
+      :api_host => 'everlapse.com',
       :api_version => '1',
       :api_prefix => 'api',
       :result_format => :mashie,
