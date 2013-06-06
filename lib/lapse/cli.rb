@@ -27,36 +27,41 @@ module Lapse
     end
 
     desc 'create_clip', 'Creates a clip'
-    def create_clip(title, *images)
+    def create_clip(title, *image_paths)
       clip = authenticated_client.create_clip(title)
       puts "Created clip id #{clip.id}"
 
-      images.each do |image|
-        new_frame = authenticated_client.create_frame(clip.id)
-        file_upload = Faraday::UploadIO.new(image, 'image/jpeg')
-        params = new_frame.upload_params.to_hash.merge({'file' => file_upload })
-
-        conn = Faraday.new do |c|
-          c.use Faraday::Request::Multipart
-          c.adapter :net_http
-        end
-        response = conn.post(new_frame.upload_url, params)
-
-        if response.status == 303
-          conn.head response.headers['location']
-        end
-
-        authenticated_client.accept_frame(clip.id, new_frame.id)
-        puts "Uploaded frame #{new_frame.id}"
+      image_paths.each do |image_path|
+        upload_frame(clip.id, image_path)
       end
 
-      sleep 2
+      puts 'Publishing clip'
+      authenticated_client.publish_clip(clip.id)
 
-      p authenticated_client.publish_clip(clip.id)
-
-      puts clip.slug
+      puts "#{api_host}/#{clip.slug}"
     end
 
+    desc 'upload_frame', 'Uploads and accepts an image to a clip'
+    def upload_frame(clip_id, image_path)
+      new_frame = authenticated_client.create_frame(clip_id)
+      file_upload = Faraday::UploadIO.new(image_path, 'image/jpeg')
+      params = new_frame.upload_params.to_hash.merge({'file' => file_upload })
+
+      conn = Faraday.new do |c|
+        c.use Faraday::Request::Multipart
+        c.adapter :net_http
+      end
+      response = conn.post(new_frame.upload_url, params)
+
+      if response.status == 303
+        conn.head response.headers['location']
+      else
+        raise response.body
+      end
+
+      authenticated_client.accept_frame(clip_id, new_frame.id)
+      puts "Uploaded frame #{new_frame.id} to clip #{clip_id}"
+    end
 
     protected
 
