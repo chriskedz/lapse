@@ -10,10 +10,6 @@ module Lapse
         post("clips/#{clip_id}/frames").body
       end
 
-      def accept_frame(clip_id, frame_id)
-        boolean_from_response(:post, "clips/#{clip_id}/frames/#{frame_id}/accept")
-      end
-
       def destroy_frame(clip_id, frame_id)
         boolean_from_response(:delete, "clips/#{clip_id}/frames/#{frame_id}")
       end

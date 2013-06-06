@@ -31,9 +31,11 @@ module Lapse
       clip = authenticated_client.create_clip(title)
       puts "Created clip id #{clip.id}"
 
-      image_paths.each do |image_path|
+      frames = image_paths.each do |image_path|
         upload_frame(clip.id, image_path)
       end
+
+      authenticated_client.accept_frames(clip.id, frames.map(&:id))
 
       puts 'Publishing clip'
       authenticated_client.publish_clip(clip.id)
@@ -59,14 +61,15 @@ module Lapse
         raise response.body
       end
 
-      authenticated_client.accept_frame(clip_id, new_frame.id)
-
       putc '*'
+
+      new_frame
     end
 
     desc 'photobooth', 'Runs a photobooth'
     option :url
-    def photobooth(title, frames = 10)
+    method_option :open, :aliases => "-o", desc: "Open the clip"
+    def photobooth(title, frame_count = 10)
       clip = authenticated_client.create_clip(title)
 
       unless options[:url]
@@ -74,7 +77,7 @@ module Lapse
         return
       end
 
-      frames.to_i.times do |i|
+      frames = frame_count.to_i.times.map do |i|
         if options[:url]
           file = download_image(options[:url])
         else
@@ -85,10 +88,19 @@ module Lapse
         upload_frame clip.id, file.path
       end
 
+      authenticated_client.accept_frames(clip.id, frames.map(&:id))
+
       authenticated_client.publish_clip(clip.id)
 
-      puts "\n#{api_host}/#{clip.slug}"
+      url = "#{api_host}/#{clip.slug}"
 
+      if options[:open]
+        system "open #{url}"
+      else
+        system "echo #{url} | pbcopy"
+      end
+
+      puts "\n#{url}"
     end
 
     protected

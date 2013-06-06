@@ -44,7 +44,7 @@ module Lapse
         response = http.request(request)
 
         # Check for errors
-        handle_error(response)
+        handle_error(request, response)
 
         # Return the raw response object
         response
@@ -84,14 +84,14 @@ module Lapse
         end
       end
 
-      def handle_error(response)
+      def handle_error(request, response)
         # Find error or return
         return unless error = Lapse::ERROR_MAP[response.code.to_i]
 
         # Try to add a useful message
         message = nil
         begin
-          message = MultiJson.load(response.body)['error_description']
+          message = MultiJson.load(response.body)['error_description'] || request.path
         rescue MultiJson::DecodeError => e
         end
 
