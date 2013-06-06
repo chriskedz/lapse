@@ -60,10 +60,63 @@ module Lapse
       end
 
       authenticated_client.accept_frame(clip_id, new_frame.id)
-      puts "Uploaded frame #{new_frame.id} to clip #{clip_id}"
+
+      putc '*'
+    end
+
+    desc 'photobooth', 'Runs a photobooth'
+    option :url
+    def photobooth(title, frames = 10)
+      clip = authenticated_client.create_clip(title)
+      frames.to_i.times do |i|
+        if options[:url]
+          file = download_image(options[:url])
+        else
+          file = Tempfile.new(['photobooth', '.jpg'], encoding: 'BINARY')
+          system "imagesnap #{file.path}"
+        end
+
+        upload_frame clip.id, file.path
+      end
+
+      authenticated_client.publish_clip(clip.id)
+
+      puts "\n#{api_host}/#{clip.slug}"
+
     end
 
     protected
+
+    def download_image(url)
+      uri = Addressable::URI.parse(url)
+
+      conn = Faraday.new do |c|
+        #c.use FaradayMiddleware::FollowRedirects, limit: 3
+        c.adapter :net_http
+      end
+
+      if uri.user
+        conn.basic_auth(uri.user, uri.password)
+      end
+
+      response = conn.get(url)
+      validate_response(url, response)
+
+      convert_to_tempfile(response.body)
+    end
+
+    def validate_response(url, response)
+      raise "#{url} not found" if response.status == 404
+      raise "#{response.status} - #{response.body}" unless (200..300).include?(response.status)
+      raise "#{url} has no data" unless response.body.length > 10
+    end
+
+    def convert_to_tempfile(data)
+      file = Tempfile.open(['http', '.jpg'], encoding: 'BINARY')
+      file.write data
+      file.close
+      file
+    end
 
     def unauthenticated_client(host = api_host)
       options = {}.merge(server_options(host))
