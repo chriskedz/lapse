@@ -43,7 +43,55 @@ module Lapse
       puts "#{api_host}/#{clip.slug}"
     end
 
-    desc 'upload_frame', 'Uploads and accepts an image to a clip'
+    desc 'add_frame', 'Adds a frame to an existing clip'
+    option :url
+    method_option :open, :aliases => "-o", desc: "Open the clip"
+    def add_frame(clip_id)
+      file = get_frame(options[:url])
+      frame = upload_frame clip_id, file.path
+      clip = authenticated_client.accept_frames(clip_id, [frame.id])
+
+      url = "#{api_host}/#{clip.slug}"
+      if options[:open]
+        system "open #{url}"
+      else
+        system "echo #{url} | pbcopy"
+      end
+    end
+
+    desc 'photobooth', 'Runs a photobooth'
+    option :url
+    method_option :open, :aliases => "-o", desc: "Open the clip"
+    def photobooth(title, frame_count = 10)
+      clip = authenticated_client.create_clip(title)
+
+      unless options[:url]
+        puts "Install imagesnap via \`brew install imagesnap\` to use your local camera."
+        return
+      end
+
+      frames = frame_count.to_i.times.map do |i|
+        file = get_frame(options[:url])
+        upload_frame clip.id, file.path
+      end
+
+      authenticated_client.accept_frames(clip.id, frames.map(&:id))
+
+      authenticated_client.publish_clip(clip.id)
+
+      url = "#{api_host}/#{clip.slug}"
+
+      if options[:open]
+        system "open #{url}"
+      else
+        system "echo #{url} | pbcopy"
+      end
+
+      puts "\n#{url}"
+    end
+
+    protected
+
     def upload_frame(clip_id, image_path)
       new_frame = authenticated_client.create_frame(clip_id)
       file_upload = Faraday::UploadIO.new(image_path, 'image/jpeg')
@@ -65,45 +113,6 @@ module Lapse
 
       new_frame
     end
-
-    desc 'photobooth', 'Runs a photobooth'
-    option :url
-    method_option :open, :aliases => "-o", desc: "Open the clip"
-    def photobooth(title, frame_count = 10)
-      clip = authenticated_client.create_clip(title)
-
-      unless options[:url]
-        puts "Install imagesnap via \`brew install imagesnap\` to use your local camera."
-        return
-      end
-
-      frames = frame_count.to_i.times.map do |i|
-        if options[:url]
-          file = download_image(options[:url])
-        else
-          file = Tempfile.new(['photobooth', '.jpg'], encoding: 'BINARY')
-          system "imagesnap #{file.path} > /dev/null"
-        end
-
-        upload_frame clip.id, file.path
-      end
-
-      authenticated_client.accept_frames(clip.id, frames.map(&:id))
-
-      authenticated_client.publish_clip(clip.id)
-
-      url = "#{api_host}/#{clip.slug}"
-
-      if options[:open]
-        system "open #{url}"
-      else
-        system "echo #{url} | pbcopy"
-      end
-
-      puts "\n#{url}"
-    end
-
-    protected
 
     def download_image(url)
       uri = Addressable::URI.parse(url)
@@ -134,6 +143,15 @@ module Lapse
       file.write data
       file.close
       file
+    end
+
+    def get_frame(url = nil)
+      if url
+        file = download_image(url)
+      else
+        file = Tempfile.new(['photobooth', '.jpg'], encoding: 'BINARY')
+        system "imagesnap #{file.path} > /dev/null"
+      end
     end
 
     def unauthenticated_client(host = api_host)
