@@ -31,7 +31,7 @@ module Lapse
       clip = authenticated_client.create_clip(title)
       puts "Created clip id #{clip.id}"
 
-      frames = image_paths.each do |image_path|
+      frames = image_paths.map do |image_path|
         upload_frame(clip.id, image_path)
       end
 
