@@ -28,7 +28,7 @@ module Lapse
 
     desc 'create_clip', 'Creates a clip'
     def create_clip(title, *image_paths)
-      clip = authenticated_client.create_clip(title)
+      clip = authenticated_client.create_clip
       puts "Created clip id #{clip.id}"
 
       frames = image_paths.map do |image_path|
@@ -38,7 +38,7 @@ module Lapse
       authenticated_client.accept_frames(clip.id, frames.map(&:id))
 
       puts 'Publishing clip'
-      authenticated_client.publish_clip(clip.id)
+      authenticated_client.publish_clip(clip.id, title)
 
       puts "#{api_host}/#{clip.slug}"
     end

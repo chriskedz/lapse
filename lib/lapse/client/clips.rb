@@ -10,11 +10,8 @@ module Lapse
         get('clips/featured').body
       end
 
-      def create_clip(title = nil)
-        params = {
-          :title => title
-        }
-        post('clips', params).body
+      def create_clip
+        post('clips').body
       end
 
       def accept_frames(clip_id, frame_ids)
@@ -24,8 +21,13 @@ module Lapse
         post("clips/#{clip_id}/accept_frames", params).body
       end
 
-      def publish_clip(clip_id)
-        post("clips/#{clip_id}/publish").body
+      def publish_clip(clip_id, title)
+        params = {
+          :clip => {
+            :title => title
+          }
+        }
+        post("clips/#{clip_id}/publish", params).body
       end
 
       def destroy_clip(clip_id)
