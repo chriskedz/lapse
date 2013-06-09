@@ -63,7 +63,7 @@ module Lapse
     option :url
     method_option :open, :aliases => "-o", desc: "Open the clip"
     def photobooth(title, frame_count = 10)
-      clip = authenticated_client.create_clip(title)
+      clip = authenticated_client.create_clip
 
       unless options[:url]
         puts "Install imagesnap via \`brew install imagesnap\` to use your local camera."
@@ -77,7 +77,7 @@ module Lapse
 
       authenticated_client.accept_frames(clip.id, frames.map(&:id))
 
-      authenticated_client.publish_clip(clip.id)
+      authenticated_client.publish_clip(clip.id, title)
 
       url = "#{api_host}/#{clip.slug}"
 

@@ -10,6 +10,7 @@ module Lapse
     include Configuration
     include Frames
     include Users
+    include UserTimelines
 
     attr_reader :access_token
     attr_reader :api_scheme
