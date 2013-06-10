@@ -9,6 +9,7 @@ module Lapse
     include Clips
     include Configuration
     include Frames
+    include GlobalTimelines
     include Users
     include UserTimelines
 
