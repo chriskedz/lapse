@@ -36,6 +36,18 @@ module Lapse
       def me
         get('me').body
       end
+
+      def user(user_id)
+        get("users/#{user_id}").body
+      end
+
+      def follow(user_id)
+        boolean_from_response(:post, "users/#{user_id}/follow")
+      end
+
+      def unfollow(user_id)
+        boolean_from_response(:post, "users/#{user_id}/unfollow")
+      end
     end
   end
 end
