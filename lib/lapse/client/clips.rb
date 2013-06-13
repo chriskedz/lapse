@@ -25,7 +25,7 @@ module Lapse
         post("clips/#{clip_id}/submit_frames", params).body
       end
 
-      def publish_clip(clip_id, title)
+      def publish_clip(clip_id, title = nil)
         params = {
           :clip => {
             :title => title

@@ -17,14 +17,14 @@ class ClipsTest < Lapse::TestCase
     assert_equal Hash.new, authenticated_client.create_clip
   end
 
-   def test_accept_frames
-    stub_request(:post, 'https://everlapse.com/api/v1/clips/1/accept_frames').to_return(:status => 200, :body => "{}")
-    assert_equal Hash.new, authenticated_client.accept_frames(1, [1, 2, 3, 4])
+   def test_submit_frames
+    stub_request(:post, 'https://everlapse.com/api/v1/clips/1/submit_frames').to_return(:status => 200, :body => "{}")
+    assert_equal Hash.new, authenticated_client.submit_frames(1, [1, 2, 3, 4])
   end
 
   def test_publish_clip
     stub_request(:post, 'https://everlapse.com/api/v1/clips/1/publish').to_return(:status => 200, :body => "{}")
-    assert_equal Hash.new, authenticated_client.publish_clip(1)
+    assert_equal Hash.new, authenticated_client.publish_clip(1, "Test Title")
   end
 
   def test_destroy_clip

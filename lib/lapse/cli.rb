@@ -35,7 +35,7 @@ module Lapse
         upload_frame(clip.id, image_path)
       end
 
-      authenticated_client.accept_frames(clip.id, frames.map(&:id))
+      authenticated_client.submit_frames(clip.id, frames.map(&:id))
 
       puts 'Publishing clip'
       authenticated_client.publish_clip(clip.id, title)
@@ -49,7 +49,7 @@ module Lapse
     def add_frame(clip_id)
       file = get_frame(options[:url])
       frame = upload_frame clip_id, file.path
-      clip = authenticated_client.accept_frames(clip_id, [frame.id])
+      clip = authenticated_client.submit_frames(clip_id, [frame.id])
 
       url = "#{api_host}/#{clip.slug}"
       if options[:open]
@@ -80,7 +80,7 @@ module Lapse
         upload_frame clip.id, file.path
       end
 
-      authenticated_client.accept_frames(clip.id, frames.map(&:id))
+      authenticated_client.submit_frames(clip.id, frames.map(&:id))
 
       authenticated_client.publish_clip(clip.id, title)
 
