@@ -10,6 +10,10 @@ module Lapse
         get('clips/featured').body
       end
 
+      def clip(clip_id)
+        get("clips/#{clip_id}").body
+      end
+
       def create_clip
         post('clips').body
       end
