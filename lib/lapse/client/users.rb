@@ -37,8 +37,8 @@ module Lapse
         get('me').body
       end
 
-      def user(user_id)
-        get("users/#{user_id}").body
+      def user(user_id, params = {})
+        get("users/#{user_id}", params).body
       end
 
       def follow(user_id)
