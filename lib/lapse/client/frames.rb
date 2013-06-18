@@ -2,9 +2,6 @@ module Lapse
   class Client
     # Client methods for working with clips
     module Frames
-      def clip_frames(clip_id)
-        get("clips/#{clip_id}/frames").body
-      end
 
       def create_frame(clip_id)
         post("clips/#{clip_id}/frames").body
