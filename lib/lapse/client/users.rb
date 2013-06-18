@@ -48,6 +48,10 @@ module Lapse
       def unfollow(user_id)
         boolean_from_response(:post, "users/#{user_id}/unfollow")
       end
+
+      def block(user_id)
+        boolean_from_response(:post, "users/#{user_id}/block")
+      end
     end
   end
 end
