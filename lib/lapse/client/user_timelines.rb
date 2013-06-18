@@ -12,10 +12,6 @@ module Lapse
       def user_contributed_timeline(user_id, params = {})
         get("users/#{user_id}/timelines/contributed", params).body
       end
-
-      def user_contributors_timeline(user_id, params = {})
-        get("users/#{user_id}/timelines/contributors", params).body
-      end
     end
   end
 end
