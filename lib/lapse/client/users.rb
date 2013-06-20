@@ -49,6 +49,14 @@ module Lapse
         boolean_from_response(:post, "users/#{user_id}/unfollow")
       end
 
+      def following(user_id, params = {})
+        get("users/#{user_id}/following", params).body
+      end
+
+      def followers(user_id, params = {})
+        get("users/#{user_id}/followers", params).body
+      end
+
       def block(user_id)
         boolean_from_response(:post, "users/#{user_id}/block")
       end
