@@ -1,4 +1,4 @@
-require 'Lapse/transport'
+require 'lapse/transport'
 require 'uri'
 
 module Lapse
