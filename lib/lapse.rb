@@ -1,6 +1,6 @@
-require 'Lapse/version'
-require 'Lapse/client'
-require 'Lapse/error'
+require 'lapse/version'
+require 'lapse/client'
+require 'lapse/error'
 
 # Lapse, as in teeter-Lapse, let's you work with the Seesaw API in Ruby.
 module Lapse

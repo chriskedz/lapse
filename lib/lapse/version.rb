@@ -1,4 +1,4 @@
 module Lapse
   # Verion of the Lapse gem
-  VERSION = '0.0.12'
+  VERSION = '0.0.13'
 end
