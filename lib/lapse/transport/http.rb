@@ -60,6 +60,8 @@ module Lapse
             Net::HTTP::Put.new(uri.request_uri)
           when :delete
             Net::HTTP::Delete.new(uri.request_uri)
+          when :patch
+            Net::HTTP::Patch.new(uri.request_uri)
         end
       end
 
@@ -110,10 +112,10 @@ module Lapse
       end
 
       def can_post_data?(method)
-        [:post, :put].include?(method)
+        [:post, :put, :patch].include?(method)
       end
 
-      [:get, :post, :put, :delete].each do |method|
+      [:get, :post, :put, :delete, :patch].each do |method|
         define_method method do |*args|
           json_request(method, *args)
         end

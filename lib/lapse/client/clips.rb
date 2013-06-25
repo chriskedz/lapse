@@ -20,6 +20,11 @@ module Lapse
         post('clips').body
       end
 
+      def update_clip(clip_id, options)
+        params = { clip: options }
+        patch("clips/#{clip_id}", params).body
+      end
+
       def submit_frames(clip_id, frame_ids)
         params = {
           :frame_ids => frame_ids
