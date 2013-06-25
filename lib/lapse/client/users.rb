@@ -42,6 +42,7 @@ module Lapse
           user: options
         }
         patch('me', params).body
+      end
 
       def user(user_id, params = {})
         get("users/#{user_id}", params).body
