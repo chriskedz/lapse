@@ -37,6 +37,10 @@ module Lapse
         get('me').body
       end
 
+      def badges
+        get('me/badges').body
+      end
+
       def update_me(options = {})
         params = {
           user: options
