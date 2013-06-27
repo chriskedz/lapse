@@ -41,6 +41,14 @@ module Lapse
         post("clips/#{clip_id}/publish", params).body
       end
 
+      def flag_clip(clip_id)
+        boolean_from_response(:post, "clips/#{clip_id}/flag")
+      end
+
+      def unflag_clip(clip_id)
+        post("clips/#{clip_id}/unflag").body
+      end
+
       def destroy_clip(clip_id)
         boolean_from_response(:delete, "clips/#{clip_id}")
       end
