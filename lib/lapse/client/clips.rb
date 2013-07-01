@@ -41,11 +41,9 @@ module Lapse
         post("clips/#{clip_id}/modify_frames", params).body
       end
 
-      def publish_clip(clip_id, title = nil)
+      def publish_clip(clip_id, options = {})
         params = {
-          :clip => {
-            :title => title
-          }
+          :clip => options
         }
         post("clips/#{clip_id}/publish", params).body
       end

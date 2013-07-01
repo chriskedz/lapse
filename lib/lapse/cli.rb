@@ -38,7 +38,7 @@ module Lapse
       authenticated_client.submit_frames(clip.id, frames.map(&:id))
 
       puts 'Publishing clip'
-      authenticated_client.publish_clip(clip.id, title)
+      authenticated_client.publish_clip(clip.id, title: title)
 
       puts "#{api_host}/#{clip.slug}"
     end
@@ -82,7 +82,7 @@ module Lapse
 
       authenticated_client.submit_frames(clip.id, frames.map(&:id))
 
-      authenticated_client.publish_clip(clip.id, title)
+      authenticated_client.publish_clip(clip.id, title: title)
 
       url = "#{api_host}/#{clip.slug}"
 
