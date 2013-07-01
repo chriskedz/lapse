@@ -11,7 +11,7 @@ Read the [documentation](http://rubydoc.info/github/seesawco/Lapse-rb/master/fra
 Add this line to your application's Gemfile:
 
 ``` ruby
-gem 'Lapse'
+gem 'lapse'
 ```
 
 And then execute:
@@ -32,8 +32,8 @@ Should you wish to configure the client in an initializer, you can do the follow
 
 ``` ruby
 Lapse::Client.configure do |client|
-  client.api_host = "some.api-host.com"
-  client.api_scheme = "http"
+  client.api_host = 'everlapse.com'
+  client.api_scheme = 'http'
 end
 ```
 
