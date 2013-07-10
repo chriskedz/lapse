@@ -73,7 +73,9 @@ module Lapse
       end
 
       def user(user_id)
-        get("users/#{user_id}").body
+        path = "users/#{user_id}"
+        path << '?username=true' if user_id.is_a?(String)
+        get(path).body
       end
     end
   end
