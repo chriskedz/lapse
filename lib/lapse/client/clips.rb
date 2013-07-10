@@ -10,9 +10,9 @@ module Lapse
         get('clips/featured').body
       end
 
-      def clip(clip_id, slug = false)
+      def clip(clip_id)
         params = {}
-        params[:slug] = true if slug
+        params[:slug] = true if clip_id.is_a?(String)
         get("clips/#{clip_id}", params).body
       end
 
