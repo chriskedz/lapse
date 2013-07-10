@@ -71,6 +71,10 @@ module Lapse
       def block(user_id)
         boolean_from_response(:post, "users/#{user_id}/block")
       end
+
+      def user(user_id)
+        get("users/#{user_id}").body
+      end
     end
   end
 end
